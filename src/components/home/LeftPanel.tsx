@@ -2,14 +2,16 @@ import { ListFilter, LogOut, MessageSquareDiff, Search, User } from 'lucide-reac
 import React from 'react'
 import ThemeSwitch from './ThemeSwitch';
 import { Input } from '../ui/input';
+import Conversations from './Conversations';
+import { conversations } from '@/DummyData/db';
 
 export default function LeftPanel() {
-    const conversations = [];
+    
     return (
         <div className='w-1/4 border-gray-600 border-r'>
             <div className='sticky top-0 bg-left-panel z-10'>
                 {/*Header*/}
-                <div className='flex justify-between bg-gray-primary dark:bg-dark-gray-primary p-3 items-center'>
+                <div className='flex justify-between bg-orange-primary dark:bg-dark-gray-primary p-3 items-center'>
                     <User size={24} />
                     <div className='flex items-center gap-3'>
                         <MessageSquareDiff size={20} /> {/*TODO: This line will be replaced with UserListDialog*/}
@@ -28,7 +30,9 @@ export default function LeftPanel() {
                 </div>
             </div>
             <div className='my-3 flex flex-col gap-0 max-h-[80%] overflow-auto'>
-                {/*Conversations will go here*/}
+                {conversations?.map((conversation) => (
+					<Conversations key={conversation._id} conversation={conversation} />
+				))}
                 {conversations.length===0 && (
                     <>
                         <p className='text-center text-gray-500 text-sm mt-3'>

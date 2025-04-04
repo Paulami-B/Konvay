@@ -48,14 +48,15 @@
   --color-container: oklch(1 0 0);
 	--color-left-panel: oklch(0.123 0.032 248);
 
-	--color-gray-primary: oklch(0.950 0.015 255);
+  --color-gray-primary: oklch(0.96 0.0046 258.32);
 	--color-gray-secondary: oklch(0.953 0.014 255);
 
 	--color-left-panel: oklch(1 0 0);
 	--color-chat-hover: oklch(0.967 0.006 195);
 
-	--color-green-primary: oklch(0.454 0.201 182);
-	--color-green-chat: oklch(0.927 0.07 132);
+	/* --color-green-primary: oklch(0.454 0.201 182); */
+	--color-orange-primary: oklch(0.9543 0.0404 78.53);
+	--color-orange-chat: oklch(0.9 0.0763 70.44);
   /* LIGHT MODE CUSTOM COLORS */
 
   /* DARK MODE CUSTOM COLORS */
@@ -78,19 +79,7 @@
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
-  /* CUSTOM CLASSES */
-  /* --container: oklch(1 0 0);
-	--left-panel: oklch(0.123 0.032 248);
-
-	--gray-primary: oklch(0.950 0.015 255);
-	--gray-secondary: oklch(0.953 0.014 255);
-
-	--left-panel: oklch(1 0 0);
-	--chat-hover: oklch(0.967 0.006 195);
-
-	--green-primary: oklch(0.454 0.201 182);
-	--green-chat: oklch(0.927 0.07 132); */
-  /* CUSTOM CLASSES */
+  
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -125,21 +114,7 @@
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
-  /* CUSTOM CLASSES */
-  /* --container: oklch(0.090 0.030 245);
 
-  --gray-primary: oklch(0.158 0.022 247);
-  --gray-secondary: oklch(0.168 0.021 247);
-
-  --left-panel: oklch(0.123 0.032 248);
-  --chat-hover: oklch(0.158 0.022 247);
-
-  --green-primary: oklch(0.454 0.201 182);
-  --green-secondary: oklch(0.493 0.233 177);
-  --green-chat: oklch(0.192 0.125 182);
-
-  --gray-tertiary: oklch(0.204 0.025 248); */
-  /* CUSTOM CLASSES */
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
