@@ -1,8 +1,8 @@
 import { ListFilter, LogOut, MessageSquareDiff, Search, User } from 'lucide-react';
 import React from 'react'
-import ThemeSwitch from './ThemeSwitch';
-import { Input } from '../ui/input';
-import Conversations from './Conversations';
+import ThemeSwitch from '@/components/home/ThemeSwitch';
+import { Input } from '@/components/ui/input';
+import Conversations from '@/components/home/Conversations';
 import { conversations } from '@/DummyData/db';
 
 export default function LeftPanel() {

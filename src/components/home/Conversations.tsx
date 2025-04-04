@@ -1,5 +1,5 @@
 import { formatDate } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CheckCheck, ImageIcon, Users, VideoIcon } from "lucide-react";
 
 const Conversations = ({ conversation }: { conversation: any }) => {
