@@ -19,7 +19,7 @@ export default function GroupMembersDialog() {
 								<div key={user._id} className={`flex gap-3 items-center p-2 rounded`}>
 									<Avatar className='overflow-visible'>
 										{user.isOnline && (
-											<div className='absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-foreground' />
+											<div className='absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-foreground' />
 										)}
 										<AvatarImage src={user.image} className='rounded-full object-cover' />
 										<AvatarFallback>

@@ -4,15 +4,16 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Video, X } from 'lucide-react';
 import MessageContainer from '@/components/home/MessageContainer';
 import MessageInput from '@/components/home/MessageInput';
+import GroupMembersDialog from './GroupMembersDialog';
 
 export default function RightPanel() {
   const selectedConversation = null;
 	// if (!selectedConversation) return <ChatPlaceholder />;
 
 	const conversationName = "John Doe";
-
+	const isGroup = true;
 	return (
-		<div className='w-3/4 flex flex-col'>
+		<div className='w-full flex flex-col'>
 			<div className='w-full sticky top-0 z-50'>
 				{/* Header */}
 				<div className='flex justify-between bg-gray-primary dark:bg-dark-gray-primary p-3'>
@@ -25,7 +26,7 @@ export default function RightPanel() {
 						</Avatar>
 						<div className='flex flex-col'>
 							<p>{conversationName}</p>
-							{/* {isGroup && <GroupMembersDialog />} */}
+							{isGroup && <GroupMembersDialog />}
 						</div>
 					</div>
 
