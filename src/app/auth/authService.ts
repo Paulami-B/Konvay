@@ -1,5 +1,6 @@
 import { auth } from "@/firebase/config";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import axios from "axios";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, setPersistence, browserLocalPersistence } from "firebase/auth";
 
 type SignUpProps = {
     name: string,
@@ -9,7 +10,14 @@ type SignUpProps = {
 export const signup = async ({email, password, name}: SignUpProps) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      console.log(userCredential.user)
+      await setPersistence(auth, browserLocalPersistence);
+      const user = userCredential.user
+      console.log(user)
+      const idToken = await user.getIdToken();
+      console.log("Incoming ID Token:", idToken);
+      await axios.post("/api/session", {
+        idToken
+      })
     } catch (error: any) {
       if (error.code === 'auth/email-already-exists') {
         console.error('Email not registered.');
@@ -27,9 +35,16 @@ type SignInProps = {
 }
 export const signin = async ({email, password}: SignInProps) => {
   try {
+    await setPersistence(auth, browserLocalPersistence);
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    console.log("Email login successful:", userCredential.user);
-    return userCredential.user;
+    const user = userCredential.user
+    console.log(user)
+    const idToken = await user.getIdToken();
+    console.log("Incoming ID Token:", idToken);
+    await axios.post("/api/session", {
+      idToken
+    });
+    console.log("Session cookie set and user signed in:", user.uid);
   } catch (error:any) {
     if (error.code === 'auth/invalid-credential') {
       console.error('Incorrect email or password');
@@ -44,8 +59,14 @@ const googleProvider = new GoogleAuthProvider();
 export const signinWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
-    console.log("Google login successful:", result.user);
-    return result.user;
+    await setPersistence(auth, browserLocalPersistence);
+    const user = result.user
+    console.log(user)
+    const idToken = await user.getIdToken();
+    console.log("Incoming ID Token:", idToken);
+    await axios.post("/api/session", {
+      idToken
+    })
   } catch (error) {
     console.error("Google login error:", error);
     throw error;
