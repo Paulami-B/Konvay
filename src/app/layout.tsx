@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Caveat_Brush, Geist, Geist_Mono, Matemasie, Pacifico } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -9,6 +9,26 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const matemasie = Matemasie({
+  variable: "--font-matemasie",
+  weight: '400',
+  subsets: ["latin"],
+});
+
+
+const caveat = Caveat_Brush({
+  variable: "--font-caveat",
+  weight: '400',
+  subsets: ["latin"],
+});
+
+
+const pacifico = Pacifico({
+  variable: "--font-pacifico",
+  weight: '400',
   subsets: ["latin"],
 });
 
@@ -25,7 +45,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} 
+        ${matemasie.variable} ${caveat.variable} ${pacifico.variable}
+        antialiased`}
       >
         {children}
       </body>
