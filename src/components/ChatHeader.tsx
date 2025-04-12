@@ -5,18 +5,18 @@ import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 
 export default function ChatHeader() {
     return (
-        <div className="flex justify-start items-center gap-3 py-3 px-4 w-full bg-orange-50 h-fit top-0 sticky">
-            <FaArrowLeftLong strokeWidth={8} size={25} className="block md:hidden cursor-pointer" />
+        <div className="flex justify-start items-center gap-3 py-3 px-4 w-full bg-orange-50 dark:bg-gray-800 border-b border-orange-100 dark:border-orange-900 h-fit top-0 sticky">
+            <FaArrowLeftLong strokeWidth={8} size={25} className="block md:hidden cursor-pointer dark:text-white" />
             <div className="h-fit w-fit relative">
                 <img src="https://imgv3.fotor.com/images/slider-image/A-clear-image-of-a-woman-wearing-red-sharpened-by-Fotors-image-sharpener.jpg"
                 className="w-12 h-12 rounded-full" />
                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full" />
             </div>
-            <div className="w-full">
+            <div className="dark:text-orange-50 w-full">
                 <div className="font-bold">Pink Panda</div>
-                <div className="text-gray-500 text-sm">online</div>
+                <div className="text-gray-500 dark:text-gray-300 text-sm">online</div>
             </div>
-            <div className="flex justify-between gap-4 text-gray-600">
+            <div className="flex justify-between gap-4 text-gray-600 dark:text-orange-50">
                 <div className="flex gap-4 pr-3 border-r">
                     <PiVideoCamera className="text-2xl cursor-pointer" />
                     <FiPhone className="text-xl cursor-pointer" />

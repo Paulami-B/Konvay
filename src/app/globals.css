@@ -5,6 +5,8 @@
   --foreground: #171717;
 }
 
+@custom-variant dark (&:is(.dark *));
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -13,6 +15,10 @@
   --font-matemasie: "Matemasie", serif;
   --font-caveat: "Caveat Brush", serif;
   --font-pacifico: "Pacifico", serif;
+  --color-brown: oklch(0.3095 0.131 28.56);
+  --color-gold: oklch(0.796 0.182 72.47);
+  --color-warmamber: oklch(0.658 0.192  50.68);
+  --color-marigold: oklch(0.8 0.1563 71.94)
 }
 
 @media (prefers-color-scheme: dark) {

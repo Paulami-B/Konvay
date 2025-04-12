@@ -7,7 +7,7 @@ export default function ChatContainer() {
   return (
     <div className="h-screen w-full flex flex-col">
       <ChatHeader />
-      <div className="flex-1 overflow-auto min-h-0 p-2">
+      <div className="flex-1 overflow-auto min-h-0 p-2 dark:bg-gray-800">
         <RecievedMessage />
         <SentMessage />
         <RecievedMessage />

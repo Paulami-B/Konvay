@@ -25,14 +25,14 @@ export default function VerticalSideBar() {
     }
 
     return (
-        <div className="top-0 sticky h-screen w-full bg-orange-50">
+        <div className="top-0 sticky h-screen w-full bg-orange-50 dark:bg-gray-800 border-r border-orange-100 dark:border-orange-900 shadow-lg">
             <div className="flex justify-center items-center relative h-full">
                 <div className="absolute top-0 ml-3">
                     <div className="flex justify-center items-center my-5">
                         <img src="./Logo.png" className="w-16" />
                     </div>
-                    <AiOutlineMessage strokeWidth={5} className="cursor-pointer rounded-lg w-fit h-fit flex justify-center p-2 ml-1 my-3 text-black text-2xl
-                    hover:bg-orange-300 hover:text-white" />
+                    <AiOutlineMessage strokeWidth={5} className="cursor-pointer rounded-lg w-fit h-fit flex justify-center p-2 ml-1 my-3 text-black dark:text-orange-50 text-2xl
+                    hover:bg-orange-300 hover:text-white dark:hover:bg-orange-700 dark:hover:text-black" />
                 </div>
                 {showProfileMenu && (
                     <div className="absolute bottom-20 left-4 z-10 p-3 rounded-lg shadow-lg bg-orange-100 outline outline-orange-300">

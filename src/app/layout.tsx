@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Caveat_Brush, Geist, Geist_Mono, Matemasie, Pacifico } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "@/providers/ConvexClientProvider";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,9 +51,11 @@ export default function RootLayout({
         ${matemasie.variable} ${caveat.variable} ${pacifico.variable}
         antialiased`}
       >
-        <ConvexClientProvider>
-          {children}
-        </ConvexClientProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <ConvexClientProvider>
+            {children}
+          </ConvexClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
