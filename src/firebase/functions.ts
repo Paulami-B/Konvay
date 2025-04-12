@@ -6,8 +6,8 @@ import {
   signInWithPopup, 
   GoogleAuthProvider, 
   setPersistence, 
-  browserLocalPersistence, 
-  updateProfile
+  browserLocalPersistence,
+  signOut
 } from "firebase/auth";
 
 type SignUpProps = {
@@ -63,9 +63,10 @@ export const signin = async ({email, password}: SignInProps) => {
     console.log("Session cookie set and user signed in:", user.uid);
   } catch (error:any) {
     if (error.code === 'auth/invalid-credential') {
-      console.error('Incorrect email or password');
+        throw new Error('Incorrect email or password');
     } else {
-      console.error('Login failed:', error.message);
+        console.error('Login failed:', error.message);
+        throw new Error("Login failed");
     }
   }
 };
@@ -89,6 +90,17 @@ export const signinWithGoogle = async () => {
     });
   } catch (error) {
     console.error("Google login error:", error);
-    throw error;
+    throw new Error("Google login error");
   }
 };
+
+export const logout = async() => {
+    try {
+        await signOut(auth);
+        await axios.post('/api/logout', {}, {
+            withCredentials: true
+        });
+    } catch (error) {
+        throw new Error("Error while signing out");
+    }
+}

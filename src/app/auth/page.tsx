@@ -6,10 +6,11 @@ import PasswordInputBox from '@/components/PasswordInputBox';
 import React, { useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify';
 import { getErrorMessage, signinSchema, signupSchema } from './authSchema';
-import { signin, signinWithGoogle, signup } from './authService';
+import { signin, signinWithGoogle, signup } from '@/firebase/functions';
 import { FcGoogle } from 'react-icons/fc';
 import { useMutation } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
+import { useRouter } from 'next/navigation';
 
 type AuthProps = {
     name?: string,
@@ -21,6 +22,7 @@ type AuthProps = {
 export default function Auth() {
     const createNewUser = useMutation(api.users.createUser);
     const googleLogin = useMutation(api.users.googleUser);
+    const router = useRouter();
 
     const [values, setValues] = useState<AuthProps>({})
 
@@ -51,6 +53,7 @@ export default function Auth() {
                 if(email && password){
                     try {
                         await signin({ email, password });
+                        router.push('/chat');
                     } catch (error: any) {
                         toast.error(error.message)
                     }
@@ -62,6 +65,7 @@ export default function Auth() {
                         const res = await signup({ email, password, name });
                         //@ts-ignore
                         await createNewUser({ uid: res.uid, email: res.email, name: name, image: res.photoURL });
+                        router.push('/chat');
                     } catch (error: any) {
                         toast.error(error.message)
                     }
@@ -75,6 +79,7 @@ export default function Auth() {
         const res = await signinWithGoogle();
         //@ts-ignore
         await googleLogin({ uid: res.uid, email: res.email, name: res.name, image: res.photoURL });
+        router.push('/chat');
     }
 
     return (
