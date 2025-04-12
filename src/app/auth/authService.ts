@@ -1,30 +1,46 @@
 import { auth } from "@/firebase/config";
 import axios from "axios";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, setPersistence, browserLocalPersistence } from "firebase/auth";
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signInWithPopup, 
+  GoogleAuthProvider, 
+  setPersistence, 
+  browserLocalPersistence, 
+  updateProfile
+} from "firebase/auth";
 
 type SignUpProps = {
-    name: string,
     email: string,
-    password: string
+    password: string,
+    name: string
 }
+
+
 export const signup = async ({email, password, name}: SignUpProps) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await setPersistence(auth, browserLocalPersistence);
-      const user = userCredential.user
-      console.log(user)
+      const user = userCredential.user;
       const idToken = await user.getIdToken();
-      console.log("Incoming ID Token:", idToken);
+      console.log(user);
       await axios.post("/api/session", {
         idToken
-      })
+      });
+
+      //Add new user to convex db
+      return ({
+        uid: user.uid,
+        email: user.email,
+        photoURL: user.photoURL || `https://avatar.iran.liara.run/public/${Math.round(Math.random()*100)}`,
+      });
+
     } catch (error: any) {
       if (error.code === 'auth/email-already-exists') {
-        console.error('Email not registered.');
-      } else if (error.code === "auth/invalid-credential") {
-        alert("Email or password is incorrect.");
+        throw new Error("Email already registered");
       } else {
-        alert("Login error: " + error);
+        console.log("Login error: " + error);
+        throw new Error("Login error");
       }
     }
 };
@@ -33,14 +49,14 @@ type SignInProps = {
     email: string,
     password: string
 }
+
 export const signin = async ({email, password}: SignInProps) => {
   try {
     await setPersistence(auth, browserLocalPersistence);
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user
-    console.log(user)
+    const user = userCredential.user;
     const idToken = await user.getIdToken();
-    console.log("Incoming ID Token:", idToken);
+
     await axios.post("/api/session", {
       idToken
     });
@@ -60,13 +76,17 @@ export const signinWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
     await setPersistence(auth, browserLocalPersistence);
-    const user = result.user
-    console.log(user)
+    const user = result.user;
     const idToken = await user.getIdToken();
-    console.log("Incoming ID Token:", idToken);
     await axios.post("/api/session", {
       idToken
     })
+    return ({
+      uid: user.uid,
+      email: user.email,
+      name: user.displayName || user.email?.split("@")[0] || "",
+      photoURL: user.photoURL || `https://avatar.iran.liara.run/public/${Math.round(Math.random()*100)}`,
+    });
   } catch (error) {
     console.error("Google login error:", error);
     throw error;

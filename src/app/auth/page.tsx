@@ -8,6 +8,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import { getErrorMessage, signinSchema, signupSchema } from './authSchema';
 import { signin, signinWithGoogle, signup } from './authService';
 import { FcGoogle } from 'react-icons/fc';
+import { useMutation } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
 
 type AuthProps = {
     name?: string,
@@ -17,6 +19,8 @@ type AuthProps = {
 }
 
 export default function Auth() {
+    const createNewUser = useMutation(api.users.createUser);
+    const googleLogin = useMutation(api.users.googleUser);
 
     const [values, setValues] = useState<AuthProps>({})
 
@@ -45,22 +49,39 @@ export default function Auth() {
             const { email, password, name } = values;
             if(activeTab=='signin'){
                 if(email && password){
-                    signin({ email, password })
+                    try {
+                        await signin({ email, password });
+                    } catch (error: any) {
+                        toast.error(error.message)
+                    }
                 }
             }
             else{
                 if(email && password && name){
-                  signup({ email, password, name })
+                    try {
+                        const res = await signup({ email, password, name });
+                        //@ts-ignore
+                        await createNewUser({ uid: res.uid, email: res.email, name: name, image: res.photoURL });
+                    } catch (error: any) {
+                        toast.error(error.message)
+                    }
                 }
             }
         }
     } 
 
+    const handleSigninWithGoogle = async(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault();
+        const res = await signinWithGoogle();
+        //@ts-ignore
+        await googleLogin({ uid: res.uid, email: res.email, name: res.name, image: res.photoURL });
+    }
+
     return (
         <div>
             <div className='w-full'>
             <div className="my-4 flex justify-center">
-            <button onClick={signinWithGoogle} 
+            <button onClick={handleSigninWithGoogle} 
             className='flex gap-3 border-2 border-orange-500 hover:border-yellow-400 px-5 py-2 rounded-full font-semibold hover:font-bold cursor-pointer dark:text-orange-600'>
                 <FcGoogle size={25} />
                 Continue with Google
