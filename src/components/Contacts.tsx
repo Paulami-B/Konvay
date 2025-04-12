@@ -1,35 +1,55 @@
-import { FiSearch } from "react-icons/fi";
-import { MdSendAndArchive } from "react-icons/md";
-import ChatTile from "@/components/ChatTile";
+import { users } from '@/dummydata/users';
+import React, { useState } from 'react'
+import { HiOutlineMinusCircle } from 'react-icons/hi'
+import { IoMdAddCircleOutline } from 'react-icons/io'
+
 
 export default function Contacts() {
+    const [list, setList] = useState<number[]>([]);
   return (
-    <div className="h-screen w-full p-4 pt-0 md:p-4 bg-orange-50/40 dark:bg-gray-800 flex flex-col">
-      <div className="top-0 h-fit sticky bg-[#FFFCF8] dark:bg-gray-800 z-50">
-        <div className="text-4xl font-bold dark:text-orange-100 my-2 hidden md:block">Chats</div>
-        <div className="flex items-center gap-2 bg-orange-50 dark:bg-marigold rounded-lg p-3">
-          <FiSearch size={20} strokeWidth={3} className="text-orange-500 dark:text-red-600" />
-          <input className="w-full border-none focus:outline-none focus:ring-0 text-lg dark:placeholder-gray-700" placeholder="Search" />
+    <div className='min-w-96 max-h-120 overflow-auto'>
+        <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Users</h2>
+        <div className='my-4 dark:text-gray-100 dark:hover:text-black'>
+            {list.length>1 && (
+                <div>
+                    <div className='flex gap-5 items-center'>
+                        <img src='https://avatar.iran.liara.run/public/45' alt='user' className='h-15 w-15 rounded-full' />
+                        <button className='outline-4 outline-amber-300 p-2 text-sm font-bold hover:bg-amber-300 rounded cursor-pointer'>Upload image</button>
+                    </div>
+                    <input className='w-full my-2 outline-2 outline-black dark:outline-gray-200 py-1 px-3 rounded' placeholder='Enter Group Name...' />
+                </div>
+            )}
+            <ul>
+                {users.map((user) => (
+                    <li key={user.id} className='my-3'>
+                        <div className={`py-1 px-2 rounded flex justify-between gap-3 my-1 w-full items-center ${list.includes(user.id)? "bg-orange-200 dark:bg-marigold" : "bg-transparent"}`}>
+                            <div className='flex gap-3 items-center'>
+                                <img src={user.imageURL} alt='user'
+                                className='w-12 h-12 rounded-full dark:border-2 dark:border-orange-700' />
+                                <div className='dark:text-gray-100'>
+                                    <p className='text-sm font-bold'>{user.name}</p>
+                                </div>
+                            </div>
+                            {list.includes(user.id) ? (
+                                <HiOutlineMinusCircle size={20} strokeWidth={3} className='cursor-pointer hover:text-orange-500 dark:text-black'
+                                onClick={() => setList(prev => prev.filter(id => id !== user.id))} />
+                            ) : (
+                                <IoMdAddCircleOutline size={20} strokeWidth={10} className='cursor-pointer hover:text-orange-500 dark:text-orange-300'
+                                onClick={() => setList(prev => [...prev, user.id])} />
+                            )}
+                        </div>
+                    </li>
+                ))}
+            </ul>
+            <div className='flex justify-end my-4 dark:text-gray-100 dark:hover:text-black'>
+                    {list.length>1 ? (
+                    <button className='text-sm outline-4 outline-orange-300 cursor-pointer px-3 py-2 rounded hover:bg-orange-300 font-bold'>Create Group</button>
+                ) : (
+                    <button className='text-sm outline-4 outline-orange-300 cursor-pointer px-3 py-2 rounded hover:bg-orange-300 font-bold'>Start Chat</button>
+                )}
+            
+            </div>
         </div>
-        <div className="flex items-center justify-start gap-3 text-xl py-5">
-          <MdSendAndArchive size={30} className="dark:text-marigold"/>
-          <p className="text-lg text-orange-500 dark:text-marigold font-semibold">Archived</p>
-        </div>
-        <hr className="text-gray-300 dark:text-gray-500" />
-      </div>
-      <div className="flex-1 overflow-auto pr-2">
-        <div className="py-3">
-          <h1 className="text-lg font-semibold text-gray-500 mb-3 dark:text-gray-300">Pinned</h1>
-          <ChatTile />
-          <ChatTile />
-          <ChatTile />
-          <ChatTile />
-        </div>
-        <div className="py-3">
-          <h1 className="text-lg font-semibold text-gray-500 mb-3 dark:text-gray-300">All Chats</h1>
-          <ChatTile />
-        </div>
-      </div>
     </div>
   )
 }

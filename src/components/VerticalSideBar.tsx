@@ -32,7 +32,7 @@ export default function VerticalSideBar() {
                         <img src="./Logo.png" className="w-16" />
                     </div>
                     <AiOutlineMessage strokeWidth={5} className="cursor-pointer rounded-lg w-fit h-fit flex justify-center p-2 ml-1 my-3 text-black dark:text-orange-50 text-2xl
-                    hover:bg-orange-300 hover:text-white dark:hover:bg-orange-700 dark:hover:text-black" />
+                    hover:bg-orange-300 hover:text-white dark:hover:bg-marigold dark:hover:text-black" />
                 </div>
                 {showProfileMenu && (
                     <div className="absolute bottom-20 left-4 z-10 p-3 rounded-lg shadow-lg bg-orange-100 outline outline-orange-300">

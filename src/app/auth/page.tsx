@@ -22,6 +22,7 @@ type AuthProps = {
 export default function Auth() {
     const createNewUser = useMutation(api.users.createUser);
     const googleLogin = useMutation(api.users.googleUser);
+    const setOnline = useMutation(api.users.setUserOnline);
     const router = useRouter();
 
     const [values, setValues] = useState<AuthProps>({})
@@ -53,6 +54,7 @@ export default function Auth() {
                 if(email && password){
                     try {
                         await signin({ email, password });
+                        await setOnline({ uid: "some random uid", isOnline: true });
                         router.push('/chat');
                     } catch (error: any) {
                         toast.error(error.message)

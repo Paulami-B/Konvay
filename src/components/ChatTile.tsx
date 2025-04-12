@@ -1,7 +1,7 @@
 export default function ChatTile() {
     return (
         <button
-        className="w-full grid grid-cols-9 gap-3 items-center p-3 bg-white dark:bg-gray-700/50 hover:bg-orange-300/30 dark:hover:bg-orange-700/50 rounded-lg cursor-pointer my-2">
+        className="w-full grid grid-cols-9 gap-3 items-center p-3 bg-white dark:bg-gray-700/50 hover:bg-orange-300/30 dark:hover:bg-gray-600/80 rounded-lg cursor-pointer my-2">
             <div className="col-span-1 md:col-span-2">
                 <div className="h-fit w-fit relative">
                     <img src="https://tinypng.com/images/social/website.jpg" className="w-12 h-12 md:w-8 md:h-8 lg:w-12 lg:h-12 rounded-full" />
