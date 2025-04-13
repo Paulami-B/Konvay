@@ -104,3 +104,11 @@ export const logout = async() => {
         throw new Error("Error while signing out");
     }
 }
+
+export const getCurrentUser = () => {
+  const user = auth.currentUser;
+  if (!user) {
+    throw new Error("No user is signed in");
+  }
+  return user.uid;
+};

@@ -79,31 +79,34 @@ export const setUserOffline = mutation({
 });
 
 export const getUsers = query({
-    args: {},
+    args: {
+        uid: v.string()
+    },
     handler: async(ctx, args) => {
-        const identity = await ctx.auth.getUserIdentity();
-        if(!identity){
+        const currentUser = await ctx.db
+                    .query("users")
+                    .withIndex("by_uid", (q) => q.eq("uid", args.uid))
+                    .unique();
+        if(!currentUser){
             throw new ConvexError("Unauthorised access");
-        }
+        }                 
         const users = await ctx.db.query("users").collect();
-        return users.filter((user) => user.uid!=identity.tokenIdentifier);
+        return users.filter((user) => user.uid!=args.uid);
     }
 });
 
 export const getMe = query({
-    args: {},
+    args: {
+        uid: v.string()
+    },
     handler: async(ctx, args) => {
-        const identity = await ctx.auth.getUserIdentity();
-        if(!identity){
-            throw new ConvexError("Unauthorised access");
-        }
         const user = await ctx.db
                     .query("users")
-                    .withIndex("by_uid", (q) => q.eq("uid", identity.tokenIdentifier))
+                    .withIndex("by_uid", (q) => q.eq("uid", args.uid))
                     .unique();
         if(!user){
             throw new ConvexError("User not found");
         }                    
         return user;
     }
-})
+});

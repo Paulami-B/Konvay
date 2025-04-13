@@ -54,7 +54,7 @@ export default function Auth() {
                 if(email && password){
                     try {
                         await signin({ email, password });
-                        await setOnline({ uid: "some random uid", isOnline: true });
+                        await setOnline({ uid: "wfMMnlynCubNpRpJ3FIhJmc5Hoy2", isOnline: true });
                         router.push('/chat');
                     } catch (error: any) {
                         toast.error(error.message)

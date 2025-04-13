@@ -17,7 +17,7 @@ export default function VerticalSideBar() {
     const handleLogout = async(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         try {
             await logout();
-            await setOffline({uid: "some random uid", isOnline: false});
+            await setOffline({uid: "wfMMnlynCubNpRpJ3FIhJmc5Hoy2", isOnline: false});
             router.refresh();
         } catch (error) {
             toast.error("Error while signing out");
