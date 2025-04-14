@@ -1,12 +1,12 @@
 "use client"
 
-import { formattedDateTime } from "@/utils/functions/formattedDateTime";
+import { formatDate } from "@/utils/functions/formatDate";
 import { useConversationStore } from "@/utils/store/chatStore";
 import { FaRegImage } from "react-icons/fa6";
 import { MdVideoLibrary } from "react-icons/md";
 
 export default function ChatTile({conversation} :any) {
-    const time = formattedDateTime(conversation._creationTime);
+    const time = formatDate(conversation._creationTime);
     const imageURL = conversation.groupImage || conversation.image;
     const isOnline = !conversation.isGroup && conversation.isOnline
     const conversationName = conversation.groupName || conversation.name;

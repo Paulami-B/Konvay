@@ -5,8 +5,11 @@ import { PiVideoCamera } from "react-icons/pi";
 import { FiPhone, FiSearch } from "react-icons/fi";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { useConversationStore } from "@/utils/store/chatStore";
+import { useState } from "react";
+import Modal from "./Modal";
+import GroupMembers from "./GroupMembers";
 
-export default function ChatHeader() {
+export default function ChatHeader({setShowModal}: {setShowModal: React.Dispatch<React.SetStateAction<boolean>>}) {
     const { selectedConversation } = useConversationStore();
     return (
         <div className="flex justify-start items-center gap-3 py-3 px-4 w-full bg-orange-50 dark:bg-gray-800 border-b border-orange-100 dark:border-orange-900 h-fit top-0 sticky">
@@ -14,9 +17,12 @@ export default function ChatHeader() {
             <div className="h-fit w-fit relative">
                 <img src={selectedConversation?.isGroup ? selectedConversation.groupImage : selectedConversation?.image}
                 className="w-12 h-12 rounded-full" />
-                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full" />
+                {!selectedConversation?.isGroup && selectedConversation?.isOnline && (
+                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full" />
+                )}
             </div>
-            <div className="dark:text-orange-50 w-full">
+            <div className={`dark:text-orange-50 w-full ${selectedConversation?.isGroup ? "cursor-pointer": ""}`}
+            onClick={() => setShowModal(selectedConversation!.isGroup)}>
                 <div className="font-bold">{selectedConversation?.isGroup? selectedConversation.groupName : selectedConversation?.name}</div>
                 <div className="text-gray-500 dark:text-gray-300 text-sm">
                     {selectedConversation?.isGroup ? `${selectedConversation.participants.length} members`

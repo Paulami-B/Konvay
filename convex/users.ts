@@ -131,3 +131,28 @@ export const getMe = query({
         return user;
     }
 });
+
+export const getGroupMembers = query({
+    args: {
+        uid: v.string(),
+        conversationId: v.id("conversations")
+    },
+    handler: async(ctx, args) => {
+        const user = await ctx.db
+                    .query("users")
+                    .withIndex("by_uid", (q) => q.eq("uid", args.uid))
+                    .unique();
+        if(!user){
+            throw new ConvexError("User not found");
+        }
+        const conversation = await ctx.db.query("conversations")                 
+                            .filter((q) => q.eq(q.field("_id"), args.conversationId))
+                            .first();
+        if(!conversation){
+            throw new ConvexError("Conversation not found");
+        }
+        const users = await ctx.db.query("users").collect();
+        const groupMembers = users.filter((user) => conversation.participants.includes(user._id));
+        return groupMembers;
+    }
+})
