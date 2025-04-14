@@ -1,5 +1,38 @@
 import { ConvexError, v } from "convex/values";
-import { query } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
+
+export const sendMessage = mutation({
+    args: {
+        uid: v.string(),
+        content: v.string(),
+        conversationId: v.id("conversations")
+    },
+    handler: async(ctx, args) => {
+        const currentUser = await ctx.db
+                    .query("users")
+                    .withIndex("by_uid", (q) => q.eq("uid", args.uid))
+                    .unique();
+        if(!currentUser){
+            throw new ConvexError("Unauthorised access");
+        }
+        const conversation = await ctx.db.query("conversations")
+                            .filter((q) => q.eq(q.field("_id"), args.conversationId))
+                            .unique();
+        if(!conversation){
+            throw new ConvexError("Conversation does not exist");
+        }
+        if(!conversation.participants.includes(currentUser._id)){
+            throw new ConvexError("You are not part of this conversation");
+        }
+        
+        await ctx.db.insert("messages", {
+            sender: currentUser._id,
+            content: args.content,
+            conversationId: args.conversationId,
+            messageType: "text"
+        })
+    }
+})
 
 export const getMessages = query({
     args: {

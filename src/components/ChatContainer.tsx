@@ -30,9 +30,9 @@ export default function ChatContainer() {
           messages.map((message) => (
             message.sender?.uid===currentUser?.uid ?
             (
-              <SentMessage />
+              <SentMessage key={message._id} content={message.content} />
             ) : (
-              <RecievedMessage />
+              <RecievedMessage key={message._id} content={message.content} />
             )
           ))
         ) : (

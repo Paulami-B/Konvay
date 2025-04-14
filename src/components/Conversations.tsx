@@ -13,7 +13,7 @@ import Contacts from "./Contacts";
 export default function Conversations() {
   const [showModal, setShowModal] = useState(false);
   const { currentUser } = useAuthStore();
-  const myConversations = useQuery(api.conversations.getMyConversations, {uid: currentUser!.uid});
+  const myConversations = useQuery(api.conversations.getMyConversations, currentUser ? {uid: currentUser.uid} : "skip");
 
   return (
     <div className="h-screen w-full p-4 pt-0 md:p-4 bg-orange-50/40 dark:bg-gray-800 flex flex-col">
