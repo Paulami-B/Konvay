@@ -1,9 +1,9 @@
 import { ConvexError, v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 export const createConversation = mutation({
     args: {
-        uid: v.string(),
+        uid: v.optional(v.string()),
         participants: v.array(v.id("users")),
         isGroup: v.boolean(),
         groupName: v.optional(v.string()),
@@ -11,9 +11,13 @@ export const createConversation = mutation({
         admin: v.optional(v.id("users"))
     },
     handler: async(ctx, args) => {
+        if(!args.uid){
+            throw new ConvexError("Unauthorised access");
+        }
+        const uid = args.uid
         const currentUser = await ctx.db
                     .query("users")
-                    .withIndex("by_uid", (q) => q.eq("uid", args.uid))
+                    .withIndex("by_uid", (q) => q.eq("uid", uid))
                     .unique();
         if(!currentUser){
             throw new ConvexError("Unauthorised access");
@@ -36,12 +40,71 @@ export const createConversation = mutation({
             groupImage = args.groupImage;
         }
 
-        const newConversation = await ctx.db.insert("conversations", {
+        const conversationId = await ctx.db.insert("conversations", {
             participants: args.participants,
             isGroup: args.isGroup,
             groupName: args.groupName,
             groupImage,
             admin: args.admin
         });
+        return conversationId;
     }
+})
+
+export const getMyConversations = query({
+    args: {
+        uid: v.optional(v.string())
+    },
+    handler: async(ctx, args) => {
+        if(!args.uid){
+            throw new ConvexError("Unauthorised access");
+        }
+        const uid = args.uid
+        const currentUser = await ctx.db
+                    .query("users")
+                    .withIndex("by_uid", (q) => q.eq("uid", uid))
+                    .unique();
+        if(!currentUser){
+            throw new ConvexError("Unauthorised access");
+        }
+        const conversations = await ctx.db.query("conversations").collect();
+        const myConversations = conversations.filter((conversation) => {
+            return conversation.participants.includes(currentUser._id)
+        });
+
+        const conversationsWithDetails = await Promise.all(
+            myConversations.map(async(conversation) => {
+                //To get user details of the ither user in a 1-on-1 conversation
+                let userDetails = {};
+				if (!conversation.isGroup) {
+					const otherUserId = conversation.participants.find((id) => id !== currentUser._id);
+					const userProfile = await ctx.db
+						.query("users")
+						.filter((q) => q.eq(q.field("_id"), otherUserId))
+						.take(1);
+
+					userDetails = userProfile[0];
+				}
+
+                const lastMessage = await ctx.db
+                                    .query("messages")
+                                    .filter((q) => q.eq(q.field("conversationId"), conversation._id))
+                                    .order("desc")
+                                    .take(1);
+                return{
+					...userDetails,
+                    ...conversation,
+                    lastMessage: lastMessage[0] || null
+                }                                    
+            })
+        );
+        return conversationsWithDetails;
+    },
+})
+
+export const generateUploadURL = mutation({
+    args: {},
+    handler(ctx, args) {
+        return ctx.storage.generateUploadUrl();
+    },
 })

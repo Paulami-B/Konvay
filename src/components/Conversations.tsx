@@ -1,14 +1,19 @@
 "use client"
 
 import { FiSearch } from "react-icons/fi";
-import { MdSendAndArchive } from "react-icons/md";
 import ChatTile from "@/components/ChatTile";
 import { BsPersonFillAdd } from "react-icons/bs";
 import { useState } from "react";
 import Modal from "./Modal";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { useAuthStore } from "@/utils/store/authStore";
 
 export default function Conversations() {
   const [showModal, setShowModal] = useState(false);
+  const { currentUser } = useAuthStore();
+  const myConversations = useQuery(api.conversations.getMyConversations, {uid: currentUser?.uid});
+
   return (
     <div className="h-screen w-full p-4 pt-0 md:p-4 bg-orange-50/40 dark:bg-gray-800 flex flex-col">
       <div className="top-0 h-fit sticky bg-[#FFFCF8] dark:bg-gray-800 z-50">
@@ -24,23 +29,28 @@ export default function Conversations() {
           <FiSearch size={20} strokeWidth={3} className="text-orange-500 dark:text-red-600" />
           <input className="w-full border-none focus:outline-none focus:ring-0 text-lg dark:placeholder-gray-700" placeholder="Search" />
         </div>
-        <div className="flex items-center justify-start gap-3 text-xl py-5">
+
+        {/* TODO: Add Option to archive chat */}
+
+        {/* <div className="flex items-center justify-start gap-3 text-xl py-5">
           <MdSendAndArchive size={30} className="dark:text-marigold"/>
           <p className="text-lg text-orange-500 dark:text-marigold font-semibold">Archived</p>
-        </div>
+        </div> */}
         <hr className="text-gray-300 dark:text-gray-500" />
       </div>
       <div className="flex-1 overflow-auto pr-2">
-        <div className="py-3">
+
+        {/* TODO: Add pinned chat functionality */}
+
+        {/* <div className="py-3">
           <h1 className="text-lg font-semibold text-gray-500 mb-3 dark:text-gray-300">Pinned</h1>
           <ChatTile />
-          <ChatTile />
-          <ChatTile />
-          <ChatTile />
-        </div>
+        </div> */}
         <div className="py-3">
           <h1 className="text-lg font-semibold text-gray-500 mb-3 dark:text-gray-300">All Chats</h1>
-          <ChatTile />
+          {myConversations?.map((convo) => (
+            <ChatTile key={convo._id} conversation={convo}  />
+          ))}
         </div>
       </div>
     </div>

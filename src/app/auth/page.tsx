@@ -53,8 +53,8 @@ export default function Auth() {
             if(activeTab=='signin'){
                 if(email && password){
                     try {
-                        await signin({ email, password });
-                        await setOnline({ uid: "wfMMnlynCubNpRpJ3FIhJmc5Hoy2", isOnline: true });
+                        const res = await signin({ email, password });
+                        await setOnline({ uid: res.uid, isOnline: true });
                         router.push('/chat');
                     } catch (error: any) {
                         toast.error(error.message)
@@ -78,7 +78,7 @@ export default function Auth() {
 
     const handleSigninWithGoogle = async(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
-        const res = await signinWithGoogle();
+       const res = await signinWithGoogle();
         //@ts-ignore
         await googleLogin({ uid: res.uid, email: res.email, name: res.name, image: res.photoURL });
         router.push('/chat');

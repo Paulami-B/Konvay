@@ -1,4 +1,5 @@
 import { auth } from "@/firebase/config";
+import { useAuthStore } from "@/utils/store/authStore";
 import axios from "axios";
 import { 
   createUserWithEmailAndPassword, 
@@ -7,7 +8,9 @@ import {
   GoogleAuthProvider, 
   setPersistence, 
   browserLocalPersistence,
-  signOut
+  signOut,
+  User,
+  onAuthStateChanged
 } from "firebase/auth";
 
 type SignUpProps = {
@@ -17,7 +20,7 @@ type SignUpProps = {
 }
 
 
-export const signup = async ({email, password, name}: SignUpProps) => {
+export const signup = async ({email, password}: SignUpProps) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await setPersistence(auth, browserLocalPersistence);
@@ -27,7 +30,7 @@ export const signup = async ({email, password, name}: SignUpProps) => {
       await axios.post("/api/session", {
         idToken
       });
-
+      useAuthStore.getState().setCurrentUser(user);
       //Add new user to convex db
       return ({
         uid: user.uid,
@@ -60,7 +63,10 @@ export const signin = async ({email, password}: SignInProps) => {
     await axios.post("/api/session", {
       idToken
     });
-    console.log("Session cookie set and user signed in:", user.uid);
+    useAuthStore.getState().setCurrentUser(user);
+    return ({
+      uid: user.uid
+    });
   } catch (error:any) {
     if (error.code === 'auth/invalid-credential') {
         throw new Error('Incorrect email or password');
@@ -81,7 +87,8 @@ export const signinWithGoogle = async () => {
     const idToken = await user.getIdToken();
     await axios.post("/api/session", {
       idToken
-    })
+    });
+    useAuthStore.getState().setCurrentUser(user);
     return ({
       uid: user.uid,
       email: user.email,
@@ -100,15 +107,8 @@ export const logout = async() => {
         await axios.post('/api/logout', {}, {
             withCredentials: true
         });
+        useAuthStore.getState().setCurrentUser(undefined);
     } catch (error) {
         throw new Error("Error while signing out");
     }
 }
-
-export const getCurrentUser = () => {
-  const user = auth.currentUser;
-  if (!user) {
-    throw new Error("No user is signed in");
-  }
-  return user.uid;
-};

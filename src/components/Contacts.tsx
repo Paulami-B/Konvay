@@ -6,23 +6,28 @@ import { HiOutlineMinusCircle } from 'react-icons/hi'
 import { IoMdAddCircleOutline } from 'react-icons/io'
 import { api } from '../../convex/_generated/api';
 import { Id } from '../../convex/_generated/dataModel';
-import { getCurrentUser } from '@/firebase/functions';
+import { useAuthStore } from '@/utils/store/authStore';
 
 export default function Contacts() {
     const [selectedUsers, setSelectedUsers] = useState<Id<"users">[]>([]);
+    const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [imageURL, setImageURL] = useState<string>('https://avatar.iran.liara.run/public/45');
     const [groupName, setGroupName] = useState<string>();
     const [isLoading, setIsLoading] = useState(false);
     const createConversation = useMutation(api.conversations.createConversation);
-    const current_uid = getCurrentUser();
-    const me = useQuery(api.users.getMe, {uid: current_uid});
-    const users = useQuery(api.users.getUsers, {uid: current_uid});
+
+    const { currentUser } = useAuthStore();
+    const me = useQuery(api.users.getMe, {uid: currentUser?.uid});
+    const users = useQuery(api.users.getUsers, {uid: currentUser?.uid});
+
+    const generateUploadURL = useMutation(api.conversations.generateUploadURL);
 
     const handleInputChangeFile = (input: HTMLInputElement) => {
         return async(e: Event) => {
           e.preventDefault();
           const file = input.files?.item(0);
           if(file){
+            setSelectedImage(file);
             setImageURL(URL.createObjectURL(file));
           }
         }
@@ -45,18 +50,42 @@ export default function Contacts() {
             return;
         }
         setIsLoading(true);
+        let conversationId;
         try {
             if(selectedUsers.length==1){
-                await createConversation({
-                    uid: current_uid,
-                    participants: [...selectedUsers, me?._id!],
-                    isGroup: false
+                conversationId = await createConversation({
+                                    uid: currentUser?.uid,
+                                    participants: [...selectedUsers, me?._id!],
+                                    isGroup: false
+                                });
+            }
+            else{
+                const postURL = await generateUploadURL();
+                const result = await fetch(postURL, {
+                    method: "POST",
+					headers: { "Content-Type": selectedImage?.type! },
+					body: selectedImage,
                 });
+
+                const { storageId } = await result.json();
+
+				conversationId = await createConversation({
+                    uid: currentUser?.uid,
+					participants: [...selectedUsers, me?._id!],
+					isGroup: true,
+					admin: me?._id!,
+					groupName,
+					groupImage: storageId,
+				});
             }
         } catch (error) {
             console.log(error);
         } finally {
             setIsLoading(false);
+			setSelectedUsers([]);
+			setGroupName("");
+			setSelectedImage(null);
+            setImageURL("");
         }
     }
 

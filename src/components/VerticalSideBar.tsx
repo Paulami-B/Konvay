@@ -8,16 +8,18 @@ import { AiOutlineMessage } from "react-icons/ai";
 import { toast, ToastContainer } from "react-toastify";
 import { api } from "../../convex/_generated/api";
 import { useMutation } from "convex/react";
+import { useAuthStore } from "@/utils/store/authStore";
 
 export default function VerticalSideBar() {
     const [showProfileMenu, setShowProfileMenu] = useState<boolean>(false);
     const router = useRouter();
     const setOffline = useMutation(api.users.setUserOffline);
+    const { currentUser } = useAuthStore();
 
     const handleLogout = async(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         try {
             await logout();
-            await setOffline({uid: "wfMMnlynCubNpRpJ3FIhJmc5Hoy2", isOnline: false});
+            await setOffline({uid: currentUser?.uid, isOnline: false});
             router.refresh();
         } catch (error) {
             toast.error("Error while signing out");
