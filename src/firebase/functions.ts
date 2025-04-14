@@ -9,8 +9,6 @@ import {
   setPersistence, 
   browserLocalPersistence,
   signOut,
-  User,
-  onAuthStateChanged
 } from "firebase/auth";
 
 type SignUpProps = {
@@ -30,7 +28,6 @@ export const signup = async ({email, password}: SignUpProps) => {
       await axios.post("/api/session", {
         idToken
       });
-      useAuthStore.getState().setCurrentUser(user);
       //Add new user to convex db
       return ({
         uid: user.uid,
@@ -63,7 +60,6 @@ export const signin = async ({email, password}: SignInProps) => {
     await axios.post("/api/session", {
       idToken
     });
-    useAuthStore.getState().setCurrentUser(user);
     return ({
       uid: user.uid
     });
@@ -88,7 +84,6 @@ export const signinWithGoogle = async () => {
     await axios.post("/api/session", {
       idToken
     });
-    useAuthStore.getState().setCurrentUser(user);
     return ({
       uid: user.uid,
       email: user.email,
@@ -107,7 +102,7 @@ export const logout = async() => {
         await axios.post('/api/logout', {}, {
             withCredentials: true
         });
-        useAuthStore.getState().setCurrentUser(undefined);
+        useAuthStore.getState().setCurrentUser(null);
     } catch (error) {
         throw new Error("Error while signing out");
     }

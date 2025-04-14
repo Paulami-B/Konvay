@@ -19,7 +19,7 @@ export default function VerticalSideBar() {
     const handleLogout = async(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         try {
             await logout();
-            await setOffline({uid: currentUser?.uid, isOnline: false});
+            await setOffline({uid: currentUser!.uid, isOnline: false});
             router.refresh();
         } catch (error) {
             toast.error("Error while signing out");
@@ -47,7 +47,7 @@ export default function VerticalSideBar() {
                     <ThemeButton />
                     <button className="rounded-lg w-fit h-fit flex justify-center p-2 my-8 cursor-pointer" 
                     onClick={() => setShowProfileMenu(!showProfileMenu)}>
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1zwhySGCEBxRRFYIcQgvOLOpRGqrT3d7Qng&s" alt="user"
+                        <img src={currentUser?.image} alt="user"
                         className="w-12 h-12 rounded-full" />
                     </button>
                 </div>

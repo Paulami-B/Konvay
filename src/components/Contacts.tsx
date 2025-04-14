@@ -17,8 +17,8 @@ export default function Contacts() {
     const createConversation = useMutation(api.conversations.createConversation);
 
     const { currentUser } = useAuthStore();
-    const me = useQuery(api.users.getMe, {uid: currentUser?.uid});
-    const users = useQuery(api.users.getUsers, {uid: currentUser?.uid});
+    const me = useQuery(api.users.getMe, currentUser ? {uid: currentUser.uid} : "skip");
+    const users = useQuery(api.users.getUsers, currentUser ? {uid: currentUser.uid} : "skip");
 
     const generateUploadURL = useMutation(api.conversations.generateUploadURL);
 
@@ -54,7 +54,7 @@ export default function Contacts() {
         try {
             if(selectedUsers.length==1){
                 conversationId = await createConversation({
-                                    uid: currentUser?.uid,
+                                    uid: currentUser!.uid,
                                     participants: [...selectedUsers, me?._id!],
                                     isGroup: false
                                 });
@@ -70,7 +70,7 @@ export default function Contacts() {
                 const { storageId } = await result.json();
 
 				conversationId = await createConversation({
-                    uid: currentUser?.uid,
+                    uid: currentUser!.uid,
 					participants: [...selectedUsers, me?._id!],
 					isGroup: true,
 					admin: me?._id!,

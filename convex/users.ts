@@ -9,14 +9,20 @@ export const createUser = mutation({
         image: v.string()
     },
     handler: async(ctx, args) => {
-        const newUser = await ctx.db.insert("users", {
+        await ctx.db.insert("users", {
             uid: args.uid,
             email: args.email,
             name: args.name,
             image: args.image,
             isOnline: true
         });
-        return newUser;
+        return {
+            uid: args.uid,
+            email: args.email,
+            name: args.name,
+            image: args.image,
+            isOnline: true
+        };
     }
 });
 
@@ -35,14 +41,20 @@ export const googleUser = mutation({
         if(existing){
             return existing;
         }
-        const newUser = await ctx.db.insert("users", {
+        await ctx.db.insert("users", {
             uid: args.uid,
             email: args.email,
             name: args.name,
             image: args.image,
             isOnline: true
         });
-        return newUser;
+        return {
+            uid: args.uid,
+            email: args.email,
+            name: args.name,
+            image: args.image,
+            isOnline: true
+        };
     }
 });
 
@@ -60,23 +72,25 @@ export const setUserOnline = mutation({
             throw new ConvexError("User not found");
         }
         await ctx.db.patch(user._id, {isOnline: args.isOnline});
-        return user;
+        return{
+            uid: user.uid,
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            isOnline: user.isOnline
+        };
     }
 });
 
 export const setUserOffline = mutation({
     args: {
-        uid: v.optional(v.string()),
+        uid: v.string(),
         isOnline: v.boolean()
     }, 
     handler: async(ctx, args) => {
-        if(!args.uid){
-            throw new ConvexError("Unauthorised access");
-        }
-        const uid = args.uid
         const user = await ctx.db
                     .query("users")
-                    .withIndex("by_uid", (q) => q.eq("uid", uid)) 
+                    .withIndex("by_uid", (q) => q.eq("uid", args.uid)) 
                     .first();
         if(!user){
             throw new ConvexError("User not found");
@@ -87,16 +101,12 @@ export const setUserOffline = mutation({
 
 export const getUsers = query({
     args: {
-        uid: v.optional(v.string())
+        uid: v.string()
     },
     handler: async(ctx, args) => {
-        if(!args.uid){
-            throw new ConvexError("Unauthorised access");
-        }
-        const uid = args.uid
         const currentUser = await ctx.db
                     .query("users")
-                    .withIndex("by_uid", (q) => q.eq("uid", uid))
+                    .withIndex("by_uid", (q) => q.eq("uid", args.uid))
                     .unique();
         if(!currentUser){
             throw new ConvexError("Unauthorised access");
@@ -108,16 +118,12 @@ export const getUsers = query({
 
 export const getMe = query({
     args: {
-        uid: v.optional(v.string())
+        uid: v.string()
     },
     handler: async(ctx, args) => {
-        if(!args.uid){
-            throw new ConvexError("Unauthorised access");
-        }
-        const uid = args.uid
         const user = await ctx.db
                     .query("users")
-                    .withIndex("by_uid", (q) => q.eq("uid", uid))
+                    .withIndex("by_uid", (q) => q.eq("uid", args.uid))
                     .unique();
         if(!user){
             throw new ConvexError("User not found");

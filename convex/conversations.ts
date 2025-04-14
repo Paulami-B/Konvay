@@ -3,7 +3,7 @@ import { mutation, query } from "./_generated/server";
 
 export const createConversation = mutation({
     args: {
-        uid: v.optional(v.string()),
+        uid: v.string(),
         participants: v.array(v.id("users")),
         isGroup: v.boolean(),
         groupName: v.optional(v.string()),
@@ -11,13 +11,9 @@ export const createConversation = mutation({
         admin: v.optional(v.id("users"))
     },
     handler: async(ctx, args) => {
-        if(!args.uid){
-            throw new ConvexError("Unauthorised access");
-        }
-        const uid = args.uid
         const currentUser = await ctx.db
                     .query("users")
-                    .withIndex("by_uid", (q) => q.eq("uid", uid))
+                    .withIndex("by_uid", (q) => q.eq("uid", args.uid))
                     .unique();
         if(!currentUser){
             throw new ConvexError("Unauthorised access");
@@ -53,16 +49,12 @@ export const createConversation = mutation({
 
 export const getMyConversations = query({
     args: {
-        uid: v.optional(v.string())
+        uid: v.string()
     },
     handler: async(ctx, args) => {
-        if(!args.uid){
-            throw new ConvexError("Unauthorised access");
-        }
-        const uid = args.uid
         const currentUser = await ctx.db
                     .query("users")
-                    .withIndex("by_uid", (q) => q.eq("uid", uid))
+                    .withIndex("by_uid", (q) => q.eq("uid", args.uid))
                     .unique();
         if(!currentUser){
             throw new ConvexError("Unauthorised access");

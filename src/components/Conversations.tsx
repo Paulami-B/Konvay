@@ -8,11 +8,12 @@ import Modal from "./Modal";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useAuthStore } from "@/utils/store/authStore";
+import Contacts from "./Contacts";
 
 export default function Conversations() {
   const [showModal, setShowModal] = useState(false);
   const { currentUser } = useAuthStore();
-  const myConversations = useQuery(api.conversations.getMyConversations, {uid: currentUser?.uid});
+  const myConversations = useQuery(api.conversations.getMyConversations, {uid: currentUser!.uid});
 
   return (
     <div className="h-screen w-full p-4 pt-0 md:p-4 bg-orange-50/40 dark:bg-gray-800 flex flex-col">
@@ -23,7 +24,9 @@ export default function Conversations() {
           onClick={() => setShowModal(true)} />
         </div>
         {showModal && (
-          <Modal setShowModal={setShowModal} />
+          <Modal setShowModal={setShowModal}>
+            <Contacts />
+          </Modal>
         )}
         <div className="flex items-center gap-2 bg-orange-50 dark:bg-marigold rounded-lg p-3">
           <FiSearch size={20} strokeWidth={3} className="text-orange-500 dark:text-red-600" />

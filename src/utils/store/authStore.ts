@@ -1,16 +1,23 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { User } from "firebase/auth";
+
+type AuthStateType = {
+    uid: string;
+    name: string;
+    email: string;
+    image: string;
+    isOnline: boolean;
+}
 
 export interface AuthState {
-    currentUser?: User;
-    setCurrentUser: (currentUser?: User) => void;
+    currentUser: AuthStateType | null;
+    setCurrentUser: (currentUser: AuthStateType | null) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
     persist(
         (set) => ({
-            currentUser: undefined,
+            currentUser: null,
             setCurrentUser: (currentUser) => set({ currentUser }),
         }),
         {

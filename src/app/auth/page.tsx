@@ -11,6 +11,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { useMutation } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/utils/store/authStore';
 
 type AuthProps = {
     name?: string,
@@ -54,7 +55,8 @@ export default function Auth() {
                 if(email && password){
                     try {
                         const res = await signin({ email, password });
-                        await setOnline({ uid: res.uid, isOnline: true });
+                        const data = await setOnline({ uid: res.uid, isOnline: true });
+                        useAuthStore.getState().setCurrentUser(data);
                         router.push('/chat');
                     } catch (error: any) {
                         toast.error(error.message)
@@ -66,7 +68,8 @@ export default function Auth() {
                     try {
                         const res = await signup({ email, password, name });
                         //@ts-ignore
-                        await createNewUser({ uid: res.uid, email: res.email, name: name, image: res.photoURL });
+                        const data = await createNewUser({ uid: res.uid, email: res.email, name: name, image: res.photoURL });
+                        useAuthStore.getState().setCurrentUser(data);
                         router.push('/chat');
                     } catch (error: any) {
                         toast.error(error.message)
@@ -80,7 +83,8 @@ export default function Auth() {
         e.preventDefault();
        const res = await signinWithGoogle();
         //@ts-ignore
-        await googleLogin({ uid: res.uid, email: res.email, name: res.name, image: res.photoURL });
+        const data = await googleLogin({ uid: res.uid, email: res.email, name: res.name, image: res.photoURL });
+        useAuthStore.getState().setCurrentUser(data);
         router.push('/chat');
     }
 
