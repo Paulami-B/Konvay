@@ -5,7 +5,7 @@ import { GrEmoji } from 'react-icons/gr'
 import { LiaLinkSolid } from 'react-icons/lia'
 import { MdSend, MdVideoLibrary } from 'react-icons/md'
 import useAutosizeTextArea from '@/utils/hooks/autoResize';
-import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
+import EmojiPicker, { EmojiClickData, Theme } from "emoji-picker-react";
 import { AiFillFileAdd } from 'react-icons/ai';
 import { useMutation } from 'convex/react'
 import { api } from '../../convex/_generated/api'
@@ -14,18 +14,18 @@ import { useConversationStore } from '@/utils/store/chatStore'
 import { toast, ToastContainer } from 'react-toastify'
 import { useTheme } from 'next-themes'
 import { FaRegImage } from 'react-icons/fa6'
+import useComponentVisible from '@/utils/hooks/useComponentVisible'
 
 export default function MessageBox() {
     const { theme } = useTheme();
     const [content, setContent] = useState('');
-    const [showEmojis, setShowEmojis] = useState<boolean>(false);
     const [showOptions, setShowOptions] = useState<boolean>(false);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const sendTextMessage = useMutation(api.messages.sendMessage);
     const { currentUser } = useAuthStore();
     const { selectedConversation } = useConversationStore();
+    const  { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
     useAutosizeTextArea(textAreaRef.current, content);
-    const modalRef = useRef<HTMLDivElement>(null);
     
     const handleEmojiClick = (emojiObject: EmojiClickData) => {
         setContent((prevContent) => prevContent+emojiObject.emoji);
@@ -43,22 +43,6 @@ export default function MessageBox() {
             console.log(error);
         }
     }
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-          if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-            setShowEmojis(false)
-          }
-        };
-    
-        if (showEmojis) {
-          document.addEventListener("mousedown", handleClickOutside);
-        }
-    
-        return () => {
-          document.removeEventListener("mousedown", handleClickOutside);
-        };
-      }, [showEmojis]);
 
     return (
         <div className="w-full h-fit flex justify-between items-center gap-3 p-3 border-t border-orange-100 dark:border-orange-900 bg-white dark:bg-gray-800">
@@ -78,9 +62,10 @@ export default function MessageBox() {
                 placeholder="Message..."
                 rows={1} ref={textAreaRef} value={content}
                 onChange={(e) => setContent(e.target.value)} />
-                <GrEmoji strokeWidth={0.8} className="text-3xl text-orange-400 dark:text-marigold cursor-pointer" onClick={() => setShowEmojis(!showEmojis)} />
-                {showEmojis && (
-                    <div className='absolute bottom-16 right-3' ref={modalRef}>
+                <GrEmoji strokeWidth={0.8} className="text-3xl text-orange-400 dark:text-marigold cursor-pointer" 
+                onClick={() => setIsComponentVisible((prev) => !prev)} />
+                {isComponentVisible && (
+                    <div className='absolute bottom-16 right-3' ref={ref}>
                         <EmojiPicker theme={theme} onEmojiClick={handleEmojiClick} className="h-fit top-0 sticky" />
                     </div>
                 )}

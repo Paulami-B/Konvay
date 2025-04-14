@@ -14,7 +14,6 @@ export default function Conversations() {
   const [showModal, setShowModal] = useState(false);
   const { currentUser } = useAuthStore();
   const myConversations = useQuery(api.conversations.getMyConversations, currentUser ? {uid: currentUser.uid} : "skip");
-
   return (
     <div className="h-screen w-full p-4 pt-0 md:p-4 bg-orange-50/40 dark:bg-gray-800 flex flex-col">
       <div className="top-0 h-fit sticky bg-[#FFFCF8] dark:bg-gray-800 z-50">

@@ -1,12 +1,11 @@
 "use client"
 
-import { formatDate } from "@/utils/functions/formatDate";
+import { formatDate } from "@/utils/functions/dateTime";
 import { useConversationStore } from "@/utils/store/chatStore";
 import { FaRegImage } from "react-icons/fa6";
 import { MdVideoLibrary } from "react-icons/md";
 
 export default function ChatTile({conversation} :any) {
-    const time = formatDate(conversation._creationTime);
     const imageURL = conversation.groupImage || conversation.image;
     const isOnline = !conversation.isGroup && conversation.isOnline
     const conversationName = conversation.groupName || conversation.name;
@@ -45,7 +44,9 @@ export default function ChatTile({conversation} :any) {
                 </div>
             </div>
             <div className="col-span-1 text-sm">
-                <div className="dark:text-gray-300 text-xs lg:text-xs">{time}</div>
+                <div className="dark:text-gray-300 text-xs lg:text-xs">
+                    {formatDate(lastMessage?._creationTime || conversation._creationTime)}
+                </div>
                 {/* TODO: Add read functionality */}
                 {/* <div className="h-fit w-fit my-3 text-xs px-1.5 py-0.5 bg-marigold rounded-full font-bold text-white">1</div> */}
             </div>
