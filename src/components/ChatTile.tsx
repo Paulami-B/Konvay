@@ -39,8 +39,18 @@ export default function ChatTile({conversation} :any) {
                             <span>{lastMessage?.content}</span>
                         )
                     ) : null}
-                    {lastMessageType === "image" && <FaRegImage size={16} />}
-                    {lastMessageType === "video" && <MdVideoLibrary size={16} />}
+                    {lastMessageType === "image" && (
+                        <div className="flex gap-2">
+                            <FaRegImage size={16} />
+                            <span className="text-sm">Konvay</span>
+                        </div>
+                    )}
+                    {lastMessageType === "video" && (
+                        <div className="flex gap-2">
+                            <MdVideoLibrary size={16} />
+                            <span className="text-sm">Konvay</span>
+                        </div>
+                    )}
                 </div>
             </div>
             <div className="col-span-1 text-sm">

@@ -62,4 +62,56 @@ export const getMessages = query({
                                     ); 
         return messagesWithSender;                       
     }
-})
+});
+
+export const sendImage = mutation({
+	args: { 
+        uid: v.string(),
+        imageId: v.id("_storage"), 
+        conversation: v.id("conversations") 
+    },
+	handler: async (ctx, args) => {
+        const currentUser = await ctx.db
+                            .query("users")
+                            .withIndex("by_uid", (q) => q.eq("uid", args.uid))
+                            .unique();
+        if(!currentUser){
+            throw new ConvexError("Unauthorised access");
+        }
+
+		const content = (await ctx.storage.getUrl(args.imageId)) as string;
+
+		await ctx.db.insert("messages", {
+			content: content,
+			sender: currentUser._id,
+			messageType: "image",
+			conversationId: args.conversation,
+		});
+	},
+});
+
+export const sendVideo = mutation({
+	args: { 
+        uid: v.string(),
+        videoId: v.id("_storage"), 
+        conversation: v.id("conversations") 
+    },
+	handler: async (ctx, args) => {
+        const currentUser = await ctx.db
+                            .query("users")
+                            .withIndex("by_uid", (q) => q.eq("uid", args.uid))
+                            .unique();
+        if(!currentUser){
+            throw new ConvexError("Unauthorised access");
+        }
+
+		const content = (await ctx.storage.getUrl(args.videoId)) as string;
+
+		await ctx.db.insert("messages", {
+			content: content,
+			sender: currentUser._id,
+			messageType: "video",
+			conversationId: args.conversation,
+		});
+	},
+});

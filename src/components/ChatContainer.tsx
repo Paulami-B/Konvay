@@ -32,7 +32,7 @@ export default function ChatContainer() {
             (
               <SentMessage key={message._id} previousMessage={idx > 0 ? messages[idx - 1] : undefined} message={message} />
             ) : (
-              <RecievedMessage key={message._id} previousMessage={idx > 0 ? messages[idx - 1] : undefined} message={message} />
+              <RecievedMessage key={message._id} previousMessage={idx > 0 ? messages[idx - 1] : undefined} message={message} isGroup={selectedConversation?.isGroup}  />
             )
           ))
         ) : (
