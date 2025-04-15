@@ -9,13 +9,14 @@ import { HiOutlineMinusCircle } from 'react-icons/hi'
 import { FaUndo } from "react-icons/fa";
 import { Id } from '../../convex/_generated/dataModel'
 
-export default function GroupMembers() {
+export default function GroupMembers({onSuccess}: {onSuccess: () => void}) {
     const [selectedUsers, setSelectedUsers] = useState<Id<"users">[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const { currentUser } = useAuthStore();
-    const { selectedConversation } = useConversationStore();
+    const { selectedConversation, setSelectedConversation } = useConversationStore();
     const groupMembers = useQuery(api.users.getGroupMembers, {uid: currentUser!.uid, conversationId: selectedConversation!._id});
     const kickMembers = useMutation(api.conversations.kickUser);
+    const createConversation = useMutation(api.conversations.createConversation);
 
     const handleKickMembers = async(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
@@ -37,15 +38,39 @@ export default function GroupMembers() {
         }
     }
 
+    const handleCreateConversation = async(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, userId: Id<"users">) => {
+        e.preventDefault();
+        setIsLoading(true);
+        try {
+            const conversation = await createConversation({
+                                    uid: currentUser!.uid,
+                                    participants: [userId, currentUser!._id],
+                                    isGroup: false
+                                });
+            setSelectedConversation(conversation);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsLoading(false);
+            setSelectedUsers([]);
+            onSuccess();
+        }
+    }
+
     return (
         <div className='min-w-72 w-full'>
-            <h2 className='top-2 sticky font-bold text-lg'>Members</h2>
+            <h2 className='top-2 sticky font-bold text-lg dark:text-gray-200'>Members</h2>
             <ul className='w-full max-h-56 overflow-y-auto pr-2'>
                 {groupMembers?.map((user) => (
                     <li key={user._id} className='my-3 w-full'>
                         <div className={`py-1 px-2 rounded my-1 w-full items-center ${selectedUsers.includes(user._id)? "bg-orange-200 dark:bg-marigold" : "bg-transparent"}`}>
                             <div className='flex justify-between items-center'>
-                                <div className="flex gap-5 items-center">
+                                <button className={`flex gap-5 items-center ${currentUser?._id==user._id ? "" : "cursor-pointer"}`}
+                                onClick={(e) => {
+                                    if(currentUser?._id!=user._id){
+                                        handleCreateConversation(e, user._id);
+                                    }
+                                }}>
                                     <div className='h-fit w-fit relative'>
                                         <img src={user.image} className="w-12 h-12 md:w-8 md:h-8 lg:w-12 lg:h-12 rounded-full" />
                                         {user.isOnline && (
@@ -58,7 +83,7 @@ export default function GroupMembers() {
                                             <p className='text-gray-400 text-sm italic'>(Admin)</p>
                                         )}
                                     </div>
-                                </div>
+                                </button>
                                 {currentUser?._id==selectedConversation?.admin && currentUser?._id!=user._id && (
                                     selectedUsers.includes(user._id) ? (
                                         <FaUndo size={15} strokeWidth={10} className='cursor-pointer hover:text-orange-500 dark:text-orange-300'

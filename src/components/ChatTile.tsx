@@ -1,11 +1,11 @@
 "use client"
 
 import { formatDate } from "@/utils/functions/dateTime";
-import { useConversationStore } from "@/utils/store/chatStore";
+import { Conversation, useConversationStore } from "@/utils/store/chatStore";
 import { FaRegImage } from "react-icons/fa6";
 import { MdVideoLibrary } from "react-icons/md";
 
-export default function ChatTile({conversation} :any) {
+export default function ChatTile({conversation} : {conversation: Conversation}) {
     const imageURL = conversation.groupImage || conversation.image;
     const isOnline = !conversation.isGroup && conversation.isOnline
     const conversationName = conversation.groupName || conversation.name;
@@ -33,7 +33,7 @@ export default function ChatTile({conversation} :any) {
                 <div className="text-sm">
                     {!lastMessage && "Say Hi!"}
                     {lastMessageType === "text" ? (
-                        lastMessage?.content.length > 30 ? (
+                        lastMessage?.content && lastMessage?.content.length > 30 ? (
                             <span>{lastMessage?.content.slice(0, 30)}...</span>
                         ) : (
                             <span>{lastMessage?.content}</span>

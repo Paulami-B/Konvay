@@ -33,7 +33,7 @@ export default function SentMessage({previousMessage, message}: MessageProps) {
         <div className="absolute text-xs text-black dark:text-white bottom-0 right-1 p-1">{time}</div>
       </div>
       {open && (
-        <Modal setShowModal={setOpen}>
+        <Modal onClose={() => setOpen(false)}>
           <Image src={message.content} alt="image" height={400} width={400} />
         </Modal>
       )}

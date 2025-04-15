@@ -5,15 +5,13 @@ import { PiVideoCamera } from "react-icons/pi";
 import { FiPhone, FiSearch } from "react-icons/fi";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { useConversationStore } from "@/utils/store/chatStore";
-import { useState } from "react";
-import Modal from "./Modal";
-import GroupMembers from "./GroupMembers";
 
-export default function ChatHeader({setShowModal}: {setShowModal: React.Dispatch<React.SetStateAction<boolean>>}) {
-    const { selectedConversation } = useConversationStore();
+export default function ChatHeader({onClick}: {onClick: () => void}) {
+    const { selectedConversation, setSelectedConversation } = useConversationStore();
     return (
         <div className="flex justify-start items-center gap-3 py-3 px-4 w-full bg-orange-50 dark:bg-gray-800 border-b border-orange-100 dark:border-orange-900 h-fit top-0 sticky">
-            <FaArrowLeftLong strokeWidth={8} size={25} className="block md:hidden cursor-pointer dark:text-white" />
+            <FaArrowLeftLong strokeWidth={8} size={25} className="block md:hidden cursor-pointer dark:text-white"
+            onClick={() => setSelectedConversation(null)} />
             <div className="h-fit w-fit relative">
                 <img src={selectedConversation?.isGroup ? selectedConversation.groupImage : selectedConversation?.image}
                 className="w-12 h-12 rounded-full" />
@@ -22,7 +20,7 @@ export default function ChatHeader({setShowModal}: {setShowModal: React.Dispatch
                 )}
             </div>
             <div className={`dark:text-orange-50 w-full ${selectedConversation?.isGroup ? "cursor-pointer": ""}`}
-            onClick={() => setShowModal(selectedConversation!.isGroup)}>
+            onClick={onClick}>
                 <div className="font-bold">{selectedConversation?.isGroup? selectedConversation.groupName : selectedConversation?.name}</div>
                 <div className="text-gray-500 dark:text-gray-300 text-sm">
                     {selectedConversation?.isGroup ? `${selectedConversation.participants.length} members`

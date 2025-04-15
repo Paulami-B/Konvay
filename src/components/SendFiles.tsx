@@ -15,10 +15,11 @@ type SendFileProps = {
     // setFile: React.Dispatch<React.SetStateAction<File | undefined>>,
     // setShowOptions: React.Dispatch<React.SetStateAction<boolean>>
     sendFile: boolean,
-    setLoading: React.Dispatch<React.SetStateAction<boolean>>
+    startLoading: () => void,
+    stopLoading: () => void
 }
 
-export default function SendFiles({sendFile, setLoading}: SendFileProps) {
+export default function SendFiles({sendFile, startLoading, stopLoading}: SendFileProps) {
     const [file, setFile] = useState<File>();
     const [fileName, setFileName] = useState<string>();
     const [type, setType] = useState<'image' | 'video'>();
@@ -71,7 +72,7 @@ export default function SendFiles({sendFile, setLoading}: SendFileProps) {
 
     useEffect(() => {
         const handleSendFile = async () => {
-            setLoading(true);
+            startLoading();
             try {
                 const postUrl = await generateUploadUrl();
                 const result = await fetch(postUrl, {
@@ -103,7 +104,7 @@ export default function SendFiles({sendFile, setLoading}: SendFileProps) {
             } catch (err) {
                 toast.error("Failed to send image");
             } finally {
-                setLoading(false);
+                stopLoading();
             }
         };
         if(sendFile && file){

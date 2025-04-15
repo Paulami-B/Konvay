@@ -27,7 +27,7 @@ export const createConversation = mutation({
                                         )
                                     ).first();
         if(existingConversation){
-            return existingConversation._id;
+            return existingConversation;
         }                                   
         
         // TODO: Upload image and generate URL
@@ -43,9 +43,16 @@ export const createConversation = mutation({
             groupImage,
             admin: args.admin
         });
-        return conversationId;
+
+        const newConversation = await ctx.db
+                                .query("conversations")
+                                .filter((q) => 
+                                    q.eq(q.field("_id"), conversationId)
+                                ).first();
+
+        return newConversation;
     }
-})
+});
 
 export const getMyConversations = query({
     args: {

@@ -2,21 +2,26 @@ import { create } from "zustand";
 import { Id } from "../../../convex/_generated/dataModel";
 
 export type Conversation = {
+	_creationTime: number;
 	_id: Id<"conversations">;
+	email?: string;
 	image?: string;
-	participants: Id<"users">[];
-	isGroup: boolean;
-	name?: string;
+	admin?: string;
 	groupImage?: string;
 	groupName?: string;
-	admin?: Id<"users">;
+	isGroup: boolean;
 	isOnline?: boolean;
 	lastMessage?: {
+		_creationTime: number;
 		_id: Id<"messages">;
-		conversation: Id<"conversations">;
 		content: string;
-		sender: Id<"users">;
+		conversationId: Id<"conversations">;
+		messageType: "image" | "text" | "video";
+		sender: string;
 	};
+	name?: string;
+	participants: string[];
+	uid?: string;
 };
 
 type ConversationState = {

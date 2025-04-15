@@ -7,8 +7,9 @@ import { IoMdAddCircleOutline } from 'react-icons/io'
 import { api } from '../../convex/_generated/api';
 import { Id } from '../../convex/_generated/dataModel';
 import { useAuthStore } from '@/utils/store/authStore';
+import { Conversation, useConversationStore } from '@/utils/store/chatStore';
 
-export default function Contacts() {
+export default function Contacts({onSuccess}: {onSuccess: () => void}) {
     const [selectedUsers, setSelectedUsers] = useState<Id<"users">[]>([]);
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [imageURL, setImageURL] = useState<string>('https://avatar.iran.liara.run/public/45');
@@ -17,6 +18,7 @@ export default function Contacts() {
     const createConversation = useMutation(api.conversations.createConversation);
 
     const { currentUser } = useAuthStore();
+    const { setSelectedConversation } = useConversationStore();
     const me = useQuery(api.users.getMe, currentUser ? {uid: currentUser.uid} : "skip");
     const users = useQuery(api.users.getUsers, currentUser ? {uid: currentUser.uid} : "skip");
 
@@ -50,10 +52,10 @@ export default function Contacts() {
             return;
         }
         setIsLoading(true);
-        let conversationId;
+        let conversation: Conversation | null;
         try {
             if(selectedUsers.length==1){
-                conversationId = await createConversation({
+                conversation = await createConversation({
                                     uid: currentUser!.uid,
                                     participants: [...selectedUsers, me?._id!],
                                     isGroup: false
@@ -69,7 +71,7 @@ export default function Contacts() {
 
                 const { storageId } = await result.json();
 
-				conversationId = await createConversation({
+				conversation = await createConversation({
                     uid: currentUser!.uid,
 					participants: [...selectedUsers, me?._id!],
 					isGroup: true,
@@ -78,6 +80,7 @@ export default function Contacts() {
 					groupImage: storageId,
 				});
             }
+            setSelectedConversation(conversation);
         } catch (error) {
             console.log(error);
         } finally {
@@ -86,6 +89,7 @@ export default function Contacts() {
 			setGroupName("");
 			setSelectedImage(null);
             setImageURL("");
+            onSuccess();
         }
     }
 

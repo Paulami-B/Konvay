@@ -19,10 +19,10 @@ export default function ChatContainer() {
   const messages = useQuery(api.messages.getMessages, currentUser && selectedConversation ? {uid: currentUser!.uid, conversation: selectedConversation!._id}: "skip")
   return (
     <div className="h-screen w-full flex flex-col">
-      <ChatHeader setShowModal={setShowModal} />
+      <ChatHeader onClick={() => setShowModal(true)} />
       {showModal && (
-        <Modal setShowModal={setShowModal}>
-          <GroupMembers />
+        <Modal onClose={() => setShowModal(false)}>
+          <GroupMembers onSuccess={() => setShowModal(false)} />
         </Modal>
       )}
       <div className="flex-1 overflow-auto min-h-0 p-2 dark:bg-gray-800">
