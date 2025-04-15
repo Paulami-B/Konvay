@@ -9,7 +9,7 @@ export const createUser = mutation({
         image: v.string()
     },
     handler: async(ctx, args) => {
-        await ctx.db.insert("users", {
+        const newUser = await ctx.db.insert("users", {
             uid: args.uid,
             email: args.email,
             name: args.name,
@@ -17,6 +17,7 @@ export const createUser = mutation({
             isOnline: true
         });
         return {
+            _id: newUser,
             uid: args.uid,
             email: args.email,
             name: args.name,
@@ -39,9 +40,16 @@ export const googleUser = mutation({
                         .withIndex("by_uid", (q) => q.eq("uid", args.uid))
                         .first();
         if(existing){
-            return existing;
+            return {
+                _id: existing._id,
+                uid: args.uid,
+                email: args.email,
+                name: args.name,
+                image: args.image,
+                isOnline: true
+            };
         }
-        await ctx.db.insert("users", {
+        const newUser = await ctx.db.insert("users", {
             uid: args.uid,
             email: args.email,
             name: args.name,
@@ -49,6 +57,7 @@ export const googleUser = mutation({
             isOnline: true
         });
         return {
+            _id: newUser,
             uid: args.uid,
             email: args.email,
             name: args.name,
@@ -73,6 +82,7 @@ export const setUserOnline = mutation({
         }
         await ctx.db.patch(user._id, {isOnline: args.isOnline});
         return{
+            _id: user._id,
             uid: user.uid,
             email: user.email,
             name: user.name,

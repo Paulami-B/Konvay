@@ -10,6 +10,7 @@ import { api } from "../../convex/_generated/api";
 import { useAuthStore } from "@/utils/store/authStore";
 import Contacts from "./Contacts";
 
+
 export default function Conversations() {
   const [showModal, setShowModal] = useState(false);
   const { currentUser } = useAuthStore();
@@ -58,3 +59,4 @@ export default function Conversations() {
     </div>
   )
 }
+

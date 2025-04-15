@@ -92,7 +92,37 @@ export const getMyConversations = query({
         );
         return conversationsWithDetails;
     },
-})
+});
+
+export const kickUser = mutation({
+	args: {
+        uid: v.string(),
+		conversationId: v.id("conversations"),
+		userIds: v.array(v.id("users")),
+	},
+	handler: async (ctx, args) => {
+		const currentUser = await ctx.db
+                    .query("users")
+                    .withIndex("by_uid", (q) => q.eq("uid", args.uid))
+                    .unique();
+        if(!currentUser){
+            throw new ConvexError("Unauthorised access");
+        }
+
+		const conversation = await ctx.db
+                            .query("conversations")
+                            .filter((q) => q.eq(q.field("_id"), args.conversationId))
+                            .unique();
+
+		if (!conversation) throw new ConvexError("Conversation not found");
+
+		await ctx.db.patch(args.conversationId, {
+			participants: conversation.participants.filter((id) => 
+                Array.isArray(args.userIds) ? !args.userIds.includes(id) : id !== args.userIds
+            ),
+		});
+	},
+});
 
 export const generateUploadURL = mutation({
     args: {},

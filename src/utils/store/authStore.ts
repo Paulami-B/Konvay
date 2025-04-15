@@ -1,7 +1,9 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { Id } from "../../../convex/_generated/dataModel";
 
 type AuthStateType = {
+    _id: Id<"users">
     uid: string;
     name: string;
     email: string;
