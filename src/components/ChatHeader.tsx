@@ -29,7 +29,9 @@ export default function ChatHeader({onClick}: {onClick: () => void}) {
             </div>
             <div className="flex justify-between gap-4 text-gray-600 dark:text-orange-50">
                 <div className="flex gap-4 pr-3 border-r">
-                    <PiVideoCamera className="text-2xl cursor-pointer" />
+                    <a href="/videocall" target="_blank">
+                        <PiVideoCamera className="text-2xl cursor-pointer" />
+                    </a>
                     <FiPhone className="text-xl cursor-pointer" />
                     <FiSearch className="text-xl cursor-pointer" />
                 </div>
