@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { Id } from "../../../convex/_generated/dataModel";
 
-type AuthStateType = {
+export type AuthStateType = {
     _id: Id<"users">
     uid: string;
     name: string;
